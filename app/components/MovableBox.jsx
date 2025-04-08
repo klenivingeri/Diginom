@@ -14,6 +14,37 @@ const directionRowMap = {
   up: 3,
 };
 
+function useOrientationAwarePosition(setPosition, lastPositionRef, lastOrientationRef) {
+ 
+
+  useEffect(() => {
+     if (typeof window === 'undefined') return;
+    const handleResize = () => {
+      const currentOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+      const was = lastOrientationRef.current;
+      const pos = lastPositionRef.current;
+
+      if (currentOrientation !== was) {
+        const newX = Math.min(window.innerWidth - BOX_SIZE, pos.y);
+        const newY = Math.min(window.innerHeight - BOX_SIZE, pos.x);
+        setPosition({ x: newX, y: newY });
+
+        lastOrientationRef.current = currentOrientation;
+        lastPositionRef.current = { x: newX, y: newY };
+      } else {
+        const newX = Math.min(window.innerWidth - BOX_SIZE, pos.x);
+        const newY = Math.min(window.innerHeight - BOX_SIZE, pos.y);
+        setPosition({ x: newX, y: newY });
+        lastPositionRef.current = { x: newX, y: newY };
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setPosition]);
+}
+
+
 export default function MovableBox() {
   const {
     frame, setFrame,
@@ -28,12 +59,53 @@ export default function MovableBox() {
     foundOpen
   } = useGame();
 
+
+  const isClient = typeof window !== 'undefined';
+  const lastOrientationRef = useRef(
+    isClient && window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
+  );
+  const lastPositionRef = useRef({ x: 0, y: 0 });
+
+  // Posição inicial na parte inferior central
   useEffect(() => {
+    if (!isClient) return;
     const x = window.innerWidth / 2 - BOX_SIZE / 2;
     const y = window.innerHeight - BOX_SIZE;
     setPosition({ x, y });
+    lastPositionRef.current = { x, y };
   }, []);
 
+  // Lida com mudança de orientação
+  useEffect(() => {
+    if (!isClient) return;
+
+    const handleResize = () => {
+      const currentOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+      const was = lastOrientationRef.current;
+      const pos = lastPositionRef.current;
+
+      let newX = pos.x;
+      let newY = pos.y;
+
+      if (currentOrientation !== was) {
+        // troca x <-> y
+        newX = Math.min(window.innerWidth - BOX_SIZE, pos.y);
+        newY = Math.min(window.innerHeight - BOX_SIZE, pos.x);
+        lastOrientationRef.current = currentOrientation;
+      } else {
+        // limita nos limites da nova tela
+        newX = Math.min(window.innerWidth - BOX_SIZE, pos.x);
+        newY = Math.min(window.innerHeight - BOX_SIZE, pos.y);
+      }
+
+      setPosition({ x: newX, y: newY });
+      lastPositionRef.current = { x: newX, y: newY };
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setPosition]);
+  
   const getDirection = (dx, dy, current) => {
     if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'right' : 'left';
     if (dy !== 0) return dy > 0 ? 'down' : 'up';

@@ -6,7 +6,7 @@ GameContext.displayName = 'GameContext';
 
 export const GameProvider = ({ children }) => {
   const [frame, setFrame] = useState(0);
-  const [position, setPosition] = useState({ x: -1000, y: -1000 });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [random, setRandom] = useState(getRandom());
   const [foundOpen, setFoundOpen] = useState(false);
   const distanceRef = useRef(0);
