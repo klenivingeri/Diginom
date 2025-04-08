@@ -24,7 +24,8 @@ export default function MovableBox() {
     targetRef,
     isMouseDown,
     distanceRef,
-    setFoundOpen
+    setFoundOpen,
+    foundOpen
   } = useGame();
 
   useEffect(() => {
@@ -83,6 +84,10 @@ export default function MovableBox() {
     let raf = null;
     
     const loop = () => {
+      if (foundOpen) {
+        raf = requestAnimationFrame(loop);
+        return;
+      }
       setPosition((prev) => {
         let { x, y } = prev;
         let dx = 0, dy = 0;
@@ -158,7 +163,8 @@ export default function MovableBox() {
         height: '100vh',
         border: '2px solid red',
         position: 'relative',
-        backgroundColor: '#e5e5e5',
+        background: 'url("/gramabase.png") repeat',
+        backgroundSize: '100px 100px',
         touchAction: 'none',
         overflow: 'hidden',
       }}

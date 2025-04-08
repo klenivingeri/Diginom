@@ -5,8 +5,8 @@ import { UI } from '../UI/index'; // você pode remover se não estiver usando
 
 export const meta = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Diginom" },
+    { name: "description", content: "Bem-vindo ao Diginom online" },
   ];
 };
 

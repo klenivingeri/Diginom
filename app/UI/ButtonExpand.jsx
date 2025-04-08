@@ -1,17 +1,17 @@
-import { Expand } from '../icons/Expand';
+import { useState } from 'react';
+import { ExpandIn } from '../icons/ExpandIn';
+import { ExpandOut } from '../icons/ExpandOut';
+import {toggleFullScreen } from '../utils/fullScreen'
 
 export const ButtonExpand = () => {
-    const toggleFullScreen = () => {
-        const el = document.documentElement;
-        if (!document.fullscreenElement) {
-          el.requestFullscreen?.();
-        } else {
-          document.exitFullscreen?.();
-        }
-      };
+  const [isExpand, setIsExpand] = useState(false)
+  const handleExpand = () =>{
+    setIsExpand(!isExpand)
+    toggleFullScreen()
+  }
     return (
         <button
-        onClick={toggleFullScreen}
+        onClick={handleExpand}
         style={{
           position: 'absolute',
           top: 10,
@@ -22,7 +22,7 @@ export const ButtonExpand = () => {
           fontSize: '16px',
         }}
       >
-        <Expand />
+        {isExpand ? <ExpandIn /> : <ExpandOut/>}
       </button>
     )
 }
