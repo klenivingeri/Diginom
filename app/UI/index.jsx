@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
-import { ButtonExpand } from './ButtonExpand';
 
+import { useGame } from '../context/GameContext';
+import { ButtonExpand } from './ButtonExpand';
+import FoundModal from './FoundModal';
 
 const UIBottom = ({children}) => {
   return <div style={{
@@ -17,8 +18,8 @@ const UIBottom = ({children}) => {
   </div>
 }
 
-const DistanceTraveledBar = ({distanceTraveled}) => {
-  let width = (distanceTraveled.current / 10000) * 100
+const DistanceTraveledBar = ({distanceRef}) => {
+  let width = (distanceRef.current / 4000) * 100
 
   return <div style={{
     width: '100%',
@@ -35,16 +36,15 @@ const DistanceTraveledBar = ({distanceTraveled}) => {
   </div>
 }
 
-export const UI = (props) => {
-
+export const UI = () => {
+  const { distanceRef ,foundOpen, setFoundOpen, resetDistance} =  useGame()
   return (
     <>
       <ButtonExpand />
+      <FoundModal open={foundOpen} onClose={() => setFoundOpen(false)} resetDistance={resetDistance} />
       <UIBottom>
         <DistanceTraveledBar 
-        distanceTraveled={props.distanceTraveled}
-        resetDistanceTraveled={props.resetDistanceTraveled}
-        random={props.random}
+        distanceRef={distanceRef}
         />
       </UIBottom>
     </>

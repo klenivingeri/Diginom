@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { getRandom } from '../utils/random';
+import { useEffect, useRef } from 'react';
 import spriteSrc from '/chxk2csydkh81.png';
-import { UI } from '../UI/index';
+import { useGame } from '../context/GameContext';
 
 const SPRITE_SIZE = 32;
 const FRAME_COUNT = 4;
@@ -16,27 +15,23 @@ const directionRowMap = {
 };
 
 export default function MovableBox() {
-  const [frame, setFrame] = useState(0);
-  const [direction, setDirection] = useState('up');
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [random, setRandom] = useState(getRandom());
-
-  const containerRef = useRef(null);
-  const targetRef = useRef(null);
-  const isMouseDown = useRef(false);
-  const directionRef = useRef('up');
-  const distanceRef = useRef(0);
+  const {
+    frame, setFrame,
+    directionRef,
+    position, setPosition,
+    random,
+    containerRef,
+    targetRef,
+    isMouseDown,
+    distanceRef,
+    setFoundOpen
+  } = useGame();
 
   useEffect(() => {
     const x = window.innerWidth / 2 - BOX_SIZE / 2;
     const y = window.innerHeight - BOX_SIZE;
     setPosition({ x, y });
   }, []);
-
-  const resetDistance = () => {
-    distanceRef.current = 0;
-    setRandom(getRandom());
-  };
 
   const getDirection = (dx, dy, current) => {
     if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'right' : 'left';
@@ -67,6 +62,7 @@ export default function MovableBox() {
     handleStart(e.touches[0].clientX, e.touches[0].clientY);
   };
 
+  const accumulatorRef = useRef(0);
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isMouseDown.current) updateTarget(e.clientX, e.clientY);
@@ -84,9 +80,8 @@ export default function MovableBox() {
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('touchend', stop);
 
-    let raf;
-    let accumulator = 0;
-
+    let raf = null;
+    
     const loop = () => {
       setPosition((prev) => {
         let { x, y } = prev;
@@ -112,29 +107,32 @@ export default function MovableBox() {
           const moved = Math.hypot(dx, dy);
           if (moved > 0) {
             distanceRef.current += moved;
-            accumulator += moved;
+            accumulatorRef.current += moved;
 
             if (distanceRef.current > random) {
-              alert('encontrou algo !!');
-              resetDistance();
-              targetRef.current = null; // 🛑 Para o movimento
+              setFoundOpen(true)
+              targetRef.current = null;
+
               return { x, y };
             }
 
             const newDir = getDirection(dx, dy, directionRef.current);
             if (newDir !== directionRef.current) {
               directionRef.current = newDir;
-              setDirection(newDir);
             }
 
-            if (accumulator >= 20) {
+            if (accumulatorRef.current >= 20) {
               setFrame((f) => (f + 1) % FRAME_COUNT);
-              accumulator = 0;
+              accumulatorRef.current = 0;
             }
           }
         }
 
-        return { x, y };
+        if (x !== prev.x || y !== prev.y) {
+          return { x, y };
+        }
+
+        return prev;
       });
 
       raf = requestAnimationFrame(loop);
@@ -142,7 +140,7 @@ export default function MovableBox() {
 
     raf = requestAnimationFrame(loop);
     return () => {
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', stop);
       window.removeEventListener('touchmove', handleTouchMove);
@@ -169,6 +167,7 @@ export default function MovableBox() {
         style={{
           width: BOX_SIZE,
           height: BOX_SIZE,
+          imageRendering: 'pixelated',
           backgroundImage: `url(${spriteSrc})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: `${SPRITE_SIZE * FRAME_COUNT}px ${SPRITE_SIZE * 4}px`,
@@ -177,11 +176,6 @@ export default function MovableBox() {
           transform: `translate(${position.x}px, ${position.y}px)`,
           transition: 'transform 0.05s linear',
         }}
-      />
-      <UI
-        distanceTraveled={distanceRef}
-        resetDistanceTraveled={resetDistance}
-        random={random}
       />
     </div>
   );
