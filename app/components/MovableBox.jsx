@@ -14,37 +14,6 @@ const directionRowMap = {
   up: 3,
 };
 
-function useOrientationAwarePosition(setPosition, lastPositionRef, lastOrientationRef) {
- 
-
-  useEffect(() => {
-     if (typeof window === 'undefined') return;
-    const handleResize = () => {
-      const currentOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
-      const was = lastOrientationRef.current;
-      const pos = lastPositionRef.current;
-
-      if (currentOrientation !== was) {
-        const newX = Math.min(window.innerWidth - BOX_SIZE, pos.y);
-        const newY = Math.min(window.innerHeight - BOX_SIZE, pos.x);
-        setPosition({ x: newX, y: newY });
-
-        lastOrientationRef.current = currentOrientation;
-        lastPositionRef.current = { x: newX, y: newY };
-      } else {
-        const newX = Math.min(window.innerWidth - BOX_SIZE, pos.x);
-        const newY = Math.min(window.innerHeight - BOX_SIZE, pos.y);
-        setPosition({ x: newX, y: newY });
-        lastPositionRef.current = { x: newX, y: newY };
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [setPosition]);
-}
-
-
 export default function MovableBox() {
   const {
     frame, setFrame,
@@ -59,14 +28,13 @@ export default function MovableBox() {
     foundOpen
   } = useGame();
 
-
   const isClient = typeof window !== 'undefined';
   const lastOrientationRef = useRef(
     isClient && window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
   );
   const lastPositionRef = useRef({ x: 0, y: 0 });
 
-  // Posição inicial na parte inferior central
+  // Posição inicial
   useEffect(() => {
     if (!isClient) return;
     const x = window.innerWidth / 2 - BOX_SIZE / 2;
@@ -75,7 +43,12 @@ export default function MovableBox() {
     lastPositionRef.current = { x, y };
   }, []);
 
-  // Lida com mudança de orientação
+  // Atualiza referência da última posição
+  useEffect(() => {
+    lastPositionRef.current = position;
+  }, [position]);
+
+  // Responsividade em rotação de tela
   useEffect(() => {
     if (!isClient) return;
 
@@ -88,24 +61,21 @@ export default function MovableBox() {
       let newY = pos.y;
 
       if (currentOrientation !== was) {
-        // troca x <-> y
         newX = Math.min(window.innerWidth - BOX_SIZE, pos.y);
         newY = Math.min(window.innerHeight - BOX_SIZE, pos.x);
         lastOrientationRef.current = currentOrientation;
       } else {
-        // limita nos limites da nova tela
         newX = Math.min(window.innerWidth - BOX_SIZE, pos.x);
         newY = Math.min(window.innerHeight - BOX_SIZE, pos.y);
       }
 
       setPosition({ x: newX, y: newY });
-      lastPositionRef.current = { x: newX, y: newY };
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [setPosition]);
-  
+
   const getDirection = (dx, dy, current) => {
     if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'right' : 'left';
     if (dy !== 0) return dy > 0 ? 'down' : 'up';
@@ -136,6 +106,7 @@ export default function MovableBox() {
   };
 
   const accumulatorRef = useRef(0);
+
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isMouseDown.current) updateTarget(e.clientX, e.clientY);
@@ -154,15 +125,14 @@ export default function MovableBox() {
     window.addEventListener('touchend', stop);
 
     let raf = null;
-    
+    let animFrame = null;
+    const movingRef = { current: false };
+
     const loop = () => {
-      if (foundOpen) {
-        raf = requestAnimationFrame(loop);
-        return;
-      }
       setPosition((prev) => {
         let { x, y } = prev;
         let dx = 0, dy = 0;
+        let moved = false;
 
         if (targetRef.current) {
           dx = targetRef.current.x - x;
@@ -174,22 +144,19 @@ export default function MovableBox() {
             dy = (dy / dist) * SPEED;
             x += dx;
             y += dy;
-          } else {
-            dx = targetRef.current.x - x;
-            dy = targetRef.current.y - y;
+            moved = true;
+          } else if (dist > 0) {
             x = targetRef.current.x;
             y = targetRef.current.y;
+            moved = true;
           }
 
-          const moved = Math.hypot(dx, dy);
-          if (moved > 0) {
-            distanceRef.current += moved;
-            accumulatorRef.current += moved;
+          if (moved) {
+            distanceRef.current += Math.hypot(dx, dy);
 
             if (distanceRef.current > random) {
-              setFoundOpen(true)
+              setFoundOpen(true);
               targetRef.current = null;
-
               return { x, y };
             }
 
@@ -197,27 +164,40 @@ export default function MovableBox() {
             if (newDir !== directionRef.current) {
               directionRef.current = newDir;
             }
-
-            if (accumulatorRef.current >= 20) {
-              setFrame((f) => (f + 1) % FRAME_COUNT);
-              accumulatorRef.current = 0;
-            }
           }
         }
+
+        movingRef.current = moved;
 
         if (x !== prev.x || y !== prev.y) {
           return { x, y };
         }
-
         return prev;
       });
 
       raf = requestAnimationFrame(loop);
     };
 
+    const animate = () => {
+      if (movingRef.current) {
+        accumulatorRef.current += 1;
+        if (accumulatorRef.current >= 15) {
+          setFrame((f) => (f + 1) % FRAME_COUNT);
+          accumulatorRef.current = 0;
+        }
+      } else {
+        setFrame(0);
+      }
+
+      animFrame = requestAnimationFrame(animate);
+    };
+
     raf = requestAnimationFrame(loop);
+    animFrame = requestAnimationFrame(animate);
+
     return () => {
       if (raf) cancelAnimationFrame(raf);
+      if (animFrame) cancelAnimationFrame(animFrame);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', stop);
       window.removeEventListener('touchmove', handleTouchMove);
@@ -233,7 +213,6 @@ export default function MovableBox() {
       style={{
         width: '100vw',
         height: '100vh',
-        border: '2px solid red',
         position: 'relative',
         background: 'url("/gramabase.png") repeat',
         backgroundSize: '100px 100px',
@@ -251,6 +230,7 @@ export default function MovableBox() {
           backgroundSize: `${SPRITE_SIZE * FRAME_COUNT}px ${SPRITE_SIZE * 4}px`,
           backgroundPosition: `-${frame * SPRITE_SIZE}px -${directionRowMap[directionRef.current] * SPRITE_SIZE}px`,
           position: 'absolute',
+          zIndex: 3,
           transform: `translate(${position.x}px, ${position.y}px)`,
           transition: 'transform 0.05s linear',
         }}

@@ -1,20 +1,18 @@
-import type { MetaFunction } from "@remix-run/node";
 import { GameProvider } from '../context/GameContext';
 import MovableBox from '../components/MovableBox';
 import { UI } from '../UI/index'; // você pode remover se não estiver usando
+import SceneLayer from '../mapa/SceneLayer';
+import LevelZones from '../mapa/LevelZones';
 
-export const meta = () => {
-  return [
-    { title: "Diginom" },
-    { name: "description", content: "Bem-vindo ao Diginom online" },
-  ];
-};
+
 
 export default function Index() {
   return (
     <GameProvider>
-      <div className="flex justify-center h-screen bg-white">
+      <div className="flex justify-center h-screen bg-white relative overflow-hidden">
         <MovableBox />
+        <SceneLayer />
+        <LevelZones />
         <UI />
       </div>
     </GameProvider>
