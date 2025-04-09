@@ -230,17 +230,43 @@ export default function MovableBox() {
         style={{
           width: BOX_SIZE,
           height: BOX_SIZE,
-          imageRendering: 'pixelated',
-          backgroundImage: `url(${spriteSrc})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: `${SPRITE_SIZE * FRAME_COUNT}px ${SPRITE_SIZE * 4}px`,
-          backgroundPosition: `-${frame * SPRITE_SIZE}px -${directionRowMap[directionRef.current] * SPRITE_SIZE}px`,
           position: 'absolute',
-          zIndex: 3,
           transform: `translate(${position.x}px, ${position.y}px)`,
           transition: 'transform 0.05s linear',
+          zIndex: 3,
         }}
-      />
+      >
+        {/* sombra oval embaixo */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: -4,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: BOX_SIZE * 0.6,
+            height: 6,
+            backgroundColor: 'rgba(0, 0, 0, 0.25)',
+            borderRadius: '50%',
+            zIndex: 1,
+          }}
+        />
+
+        {/* sprite do personagem */}
+        <div
+          style={{
+            width: BOX_SIZE,
+            height: BOX_SIZE,
+            imageRendering: 'pixelated',
+            backgroundImage: `url(${spriteSrc})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: `${SPRITE_SIZE * FRAME_COUNT}px ${SPRITE_SIZE * 4}px`,
+            backgroundPosition: `-${frame * SPRITE_SIZE}px -${directionRowMap[directionRef.current] * SPRITE_SIZE}px`,
+            zIndex: 2,
+            position: 'relative',
+          }}
+        />
+      </div>
+
     </div>
   );
 }
