@@ -129,6 +129,11 @@ export default function MovableBox() {
     const movingRef = { current: false };
 
     const loop = () => {
+      if (foundOpen) {
+        targetRef.current = null;
+        isMouseDown.current = false;
+        return;
+      }
       setPosition((prev) => {
         let { x, y } = prev;
         let dx = 0, dy = 0;
@@ -157,6 +162,7 @@ export default function MovableBox() {
             if (distanceRef.current > random) {
               setFoundOpen(true);
               targetRef.current = null;
+              isMouseDown.current = false;
               return { x, y };
             }
 

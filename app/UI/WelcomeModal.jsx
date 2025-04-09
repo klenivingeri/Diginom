@@ -1,8 +1,8 @@
-import {toggleFullScreen} from '../utils/fullScreen'
+import { toggleFullScreen } from '../utils/fullScreen'
 
-export default function WelcomeModal({ open, onClose}) {
+export default function WelcomeModal({ open, onClose }) {
   if (!open) return null;
-  
+
   const handleOnClose = () => {
     toggleFullScreen()
     onClose()
@@ -18,10 +18,10 @@ export default function WelcomeModal({ open, onClose}) {
         onClick={(e) => e.stopPropagation()} // Evita fechar ao clicar no conteúdo
       >
         <div className='flex flex-1 justify-center'>
-        <img src='/logo.png'  height={200} width={200} />
-        
+          <img src='/logo.png' height={200} width={200} />
+
         </div>
-        
+
         <button
           onClick={handleOnClose}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"

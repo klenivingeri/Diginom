@@ -1,4 +1,3 @@
-// mapData.js
 export const grid = [
   [10, 10, 10, 10, 10, 9],
   [10, 9, 9, 9, 8, 9],

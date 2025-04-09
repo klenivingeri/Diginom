@@ -6,7 +6,7 @@ import FoundModal from './FoundModal';
 
 import WelcomeModal from './WelcomeModal'
 
-const UIBottom = ({children}) => {
+const UIBottom = ({ children }) => {
   return <div style={{
     position: 'fixed',
     bottom: 0,
@@ -72,17 +72,16 @@ const DistanceTraveledBar = ({ distanceRef }) => {
 };
 
 export const UI = () => {
-  const { distanceRef ,foundOpen, setFoundOpen, resetDistance} =  useGame()
-  const [modaOpen, setModal] = useState( true)
+  const { distanceRef, foundOpen, setFoundOpen, resetDistance } = useGame()
+  const [modaOpen, setModal] = useState(true)
   return (
     <>
       <ButtonExpand />
-      { //<WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
-}
+      <WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
       <FoundModal open={foundOpen} onClose={() => setFoundOpen(false)} resetDistance={resetDistance} />
       <UIBottom>
-        <DistanceTraveledBar 
-        distanceRef={distanceRef}
+        <DistanceTraveledBar
+          distanceRef={distanceRef}
         />
       </UIBottom>
     </>
