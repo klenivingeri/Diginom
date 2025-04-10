@@ -1,4 +1,3 @@
-export const getRandom = (min = 1000, max = 4000) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
+export const getRandom = (min = 100, max = 2000) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};

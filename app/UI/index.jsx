@@ -25,7 +25,7 @@ const DistanceTraveledBar = ({ distanceRef }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const newWidth = (distanceRef.current / 4000) * 100;
+      const newWidth = (distanceRef.current / 2000) * 100;
       setWidth(newWidth);
     }, 50); // atualiza a cada 50ms (ou ajuste como preferir)
 
@@ -77,7 +77,8 @@ export const UI = () => {
   return (
     <>
       <ButtonExpand />
-      <WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
+      {//<WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
+      }
       <FoundModal open={foundOpen} onClose={() => setFoundOpen(false)} resetDistance={resetDistance} />
       <UIBottom>
         <DistanceTraveledBar

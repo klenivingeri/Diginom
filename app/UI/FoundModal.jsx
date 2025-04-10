@@ -1,8 +1,9 @@
 import { useGame } from '../context/GameContext';
 import { grid } from '../mapa/grid/nivel1';
 
-export default function FoundModal({ open, onClose , resetDistance }) {
-  const { position } = useGame();
+export default function FoundModal({ open, onClose, resetDistance }) {
+  const { characterAttr } = useGame();
+  const { position } = characterAttr;
 
   if (!open) return null;
 

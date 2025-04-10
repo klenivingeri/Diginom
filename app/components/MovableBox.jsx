@@ -7,25 +7,17 @@ const FRAME_COUNT = 4;
 const BOX_SIZE = 30;
 const SPEED = 4;
 
-const directionRowMap = {
-  down: 0,
-  left: 1,
-  right: 2,
-  up: 3,
-};
-
 export default function MovableBox() {
   const {
     frame, setFrame,
-    directionRef,
-    position, setPosition,
+    characterAttr, setCharacterAttr,
     random,
     containerRef,
     targetRef,
     isMouseDown,
     distanceRef,
     setFoundOpen,
-    foundOpen
+    foundOpen,
   } = useGame();
 
   const isClient = typeof window !== 'undefined';
@@ -39,14 +31,17 @@ export default function MovableBox() {
     if (!isClient) return;
     const x = window.innerWidth / 2 - BOX_SIZE / 2;
     const y = window.innerHeight - BOX_SIZE;
-    setPosition({ x, y });
+    setCharacterAttr((prev) => ({
+      ...prev,
+      position: { x, y },
+    }));
     lastPositionRef.current = { x, y };
   }, []);
 
   // Atualiza referência da última posição
   useEffect(() => {
-    lastPositionRef.current = position;
-  }, [position]);
+    lastPositionRef.current = characterAttr.position;
+  }, [characterAttr.position]);
 
   // Responsividade em rotação de tela
   useEffect(() => {
@@ -69,12 +64,15 @@ export default function MovableBox() {
         newY = Math.min(window.innerHeight - BOX_SIZE, pos.y);
       }
 
-      setPosition({ x: newX, y: newY });
+      setCharacterAttr((prev) => ({
+        ...prev,
+        position: { x: newX, y: newY },
+      }));
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [setPosition]);
+  }, [setCharacterAttr]);
 
   const getDirection = (dx, dy, current) => {
     if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'right' : 'left';
@@ -134,8 +132,9 @@ export default function MovableBox() {
         isMouseDown.current = false;
         return;
       }
-      setPosition((prev) => {
-        let { x, y } = prev;
+
+      setCharacterAttr((prev) => {
+        let { x, y } = prev.position;
         let dx = 0, dy = 0;
         let moved = false;
 
@@ -158,26 +157,27 @@ export default function MovableBox() {
 
           if (moved) {
             distanceRef.current += Math.hypot(dx, dy);
-
             if (distanceRef.current > random) {
               setFoundOpen(true);
               targetRef.current = null;
               isMouseDown.current = false;
-              return { x, y };
+              return {
+                ...prev,
+                position: { x, y }
+              };
             }
 
-            const newDir = getDirection(dx, dy, directionRef.current);
-            if (newDir !== directionRef.current) {
-              directionRef.current = newDir;
-            }
+            const newDir = getDirection(dx, dy, prev.direction);
+            movingRef.current = true; // ⬅️ AQUI
+            return {
+              ...prev,
+              position: { x, y },
+              direction: newDir,
+            };
           }
         }
 
-        movingRef.current = moved;
-
-        if (x !== prev.x || y !== prev.y) {
-          return { x, y };
-        }
+        movingRef.current = false; // ⬅️ E AQUI
         return prev;
       });
 
@@ -231,12 +231,12 @@ export default function MovableBox() {
           width: BOX_SIZE,
           height: BOX_SIZE,
           position: 'absolute',
-          transform: `translate(${position.x}px, ${position.y}px)`,
+          transform: `translate(${characterAttr.position.x}px, ${characterAttr.position.y}px)`,
           transition: 'transform 0.05s linear',
           zIndex: 3,
         }}
       >
-        {/* sombra oval embaixo */}
+        {/* sombra oval */}
         <div
           style={{
             position: 'absolute',
@@ -250,8 +250,7 @@ export default function MovableBox() {
             zIndex: 1,
           }}
         />
-
-        {/* sprite do personagem */}
+        {/* sprite */}
         <div
           style={{
             width: BOX_SIZE,
@@ -260,13 +259,12 @@ export default function MovableBox() {
             backgroundImage: `url(${spriteSrc})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: `${SPRITE_SIZE * FRAME_COUNT}px ${SPRITE_SIZE * 4}px`,
-            backgroundPosition: `-${frame * SPRITE_SIZE}px -${directionRowMap[directionRef.current] * SPRITE_SIZE}px`,
+            backgroundPosition: `-${frame * SPRITE_SIZE}px -${characterAttr.directionRowMap[characterAttr.direction] * SPRITE_SIZE}px`,
             zIndex: 2,
             position: 'relative',
           }}
         />
       </div>
-
     </div>
   );
 }
