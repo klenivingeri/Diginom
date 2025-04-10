@@ -1,0 +1,86 @@
+export const vegetation = {
+  0: {
+    position: {
+      x: Math.floor(Math.random() * 500),
+      y: Math.floor(Math.random() * 1000),
+    },
+    width: 60,
+    height: 60,
+    img: "/arvore1.png",
+    type: "arvore",
+    nevative: 32,
+    shadow: 50,
+  },
+  1: {
+    position: {
+      x: Math.floor(Math.random() * 500),
+      y: Math.floor(Math.random() * 1000),
+    },
+    width: 20,
+    height: 20,
+    img: "/planta.png",
+    type: "arvore",
+    nevative: 32,
+    shadow: 50,
+  },
+  2: {
+    position: {
+      x: Math.floor(Math.random() * 500),
+      y: Math.floor(Math.random() * 1000),
+    },
+    width: 20,
+    height: 25,
+    img: "/barril.png",
+    type: "arvore",
+    nevative: 32,
+    shadow: 50,
+  },
+  3: {
+    position: {
+      x: Math.floor(Math.random() * 500),
+      y: Math.floor(Math.random() * 1000),
+    },
+    width: 10,
+    height: 10,
+    img: "/pedra.png",
+    type: "arvore",
+    nevative: 32,
+    shadow: 50,
+  },
+  4: {
+    position: {
+      x: Math.floor(Math.random() * 500),
+      y: Math.floor(Math.random() * 1000),
+    },
+    width: 10,
+    height: 10,
+    img: "pedra.png",
+    type: "arvore",
+    nevative: 32,
+    shadow: 50,
+  },
+  5: {
+    position: {
+      x: Math.floor(Math.random() * 0),
+      y: Math.floor(Math.random() * 1000),
+    },
+    width: 40,
+    height: 20,
+    img: "/carrinho.png",
+    type: "arvore",
+    nevative: 32,
+    shadow: 50,
+  },
+  6: {
+    position: {
+      x: Math.floor(Math.random() * 0),
+      y: Math.floor(Math.random() * 1000),
+    },
+    width: 15,
+    height: 15,
+    img: "/madeira.png",
+    type: "arvore",
+    nevative: 32,
+    shadow: 50,
+  },
+};

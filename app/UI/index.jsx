@@ -77,8 +77,7 @@ export const UI = () => {
   return (
     <>
       <ButtonExpand />
-      {//<WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
-      }
+      <WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
       <FoundModal open={foundOpen} onClose={() => setFoundOpen(false)} resetDistance={resetDistance} />
       <UIBottom>
         <DistanceTraveledBar
