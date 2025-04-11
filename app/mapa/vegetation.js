@@ -78,7 +78,7 @@ export const vegetation = {
     },
     width: 15,
     height: 15,
-    img: "/madeira.png",
+    img: "/planta.png",
     type: "arvore",
     nevative: 32,
     shadow: 50,

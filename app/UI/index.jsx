@@ -13,7 +13,7 @@ const UIBottom = ({ children }) => {
     right: 0,
     width: '100%',
     color: 'black',
-    zIndex: 1000,
+    zIndex: 199,
     height: '5px',
     fontSize: '16px',
   }}>
@@ -71,15 +71,34 @@ const DistanceTraveledBar = ({ distanceRef }) => {
   );
 };
 
+const ShowMoviment = ({ characterAttr }) => {
+  return <div style={{
+    position: 'fixed',
+    bottom: 10,
+    right: 10,
+    width: '100px',
+    color: 'black',
+    fontSize: '10px ',
+    zIndex: 199,
+    display: 'flex',
+    justifyContent: 'end',
+    height: '5px',
+  }}>
+    {`y: ${Math.floor(characterAttr.position.y)} x: ${Math.floor(characterAttr.position.x)}`}
+  </div>
+}
 export const UI = () => {
-  const { distanceRef, foundOpen, setFoundOpen, resetDistance } = useGame()
+  const { distanceRef, foundOpen, setFoundOpen, resetDistance, characterAttr } = useGame()
   const [modaOpen, setModal] = useState(true)
   return (
     <>
       <ButtonExpand />
       <WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
       <FoundModal open={foundOpen} onClose={() => setFoundOpen(false)} resetDistance={resetDistance} />
+
+      <ShowMoviment characterAttr={characterAttr} />
       <UIBottom>
+
         <DistanceTraveledBar
           distanceRef={distanceRef}
         />

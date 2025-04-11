@@ -1,11 +1,6 @@
 import { useEffect, useRef } from 'react';
-import spriteSrc from '/chxk2csydkh81.png';
-import { useGame } from '../context/GameContext';
 
-const SPRITE_SIZE = 32;
-const FRAME_COUNT = 4;
-const BOX_SIZE = 30;
-const SPEED = 4;
+import { useGame } from '../context/GameContext';
 
 export default function MovableBox() {
   const {
@@ -18,19 +13,19 @@ export default function MovableBox() {
     distanceRef,
     setFoundOpen,
     foundOpen,
+    lastPositionRef,
+    handleResize
   } = useGame();
-
+  const { sprite } = characterAttr
   const isClient = typeof window !== 'undefined';
-  const lastOrientationRef = useRef(
-    isClient && window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
-  );
-  const lastPositionRef = useRef({ x: 0, y: 0 });
+  const accumulatorRef = useRef(0);
+  const movingRef = useRef(false);
 
   // Posição inicial
   useEffect(() => {
     if (!isClient) return;
-    const x = window.innerWidth / 2 - BOX_SIZE / 2;
-    const y = window.innerHeight - BOX_SIZE;
+    const x = window.innerWidth / 2 - sprite.boxSize / 2;
+    const y = window.innerHeight - sprite.boxSize;
     setCharacterAttr((prev) => ({
       ...prev,
       position: { x, y },
@@ -38,41 +33,17 @@ export default function MovableBox() {
     lastPositionRef.current = { x, y };
   }, []);
 
-  // Atualiza referência da última posição
+  // Atualiza última posição
   useEffect(() => {
     lastPositionRef.current = characterAttr.position;
   }, [characterAttr.position]);
 
-  // Responsividade em rotação de tela
+  // Responsividade
   useEffect(() => {
     if (!isClient) return;
-
-    const handleResize = () => {
-      const currentOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
-      const was = lastOrientationRef.current;
-      const pos = lastPositionRef.current;
-
-      let newX = pos.x;
-      let newY = pos.y;
-
-      if (currentOrientation !== was) {
-        newX = Math.min(window.innerWidth - BOX_SIZE, pos.y);
-        newY = Math.min(window.innerHeight - BOX_SIZE, pos.x);
-        lastOrientationRef.current = currentOrientation;
-      } else {
-        newX = Math.min(window.innerWidth - BOX_SIZE, pos.x);
-        newY = Math.min(window.innerHeight - BOX_SIZE, pos.y);
-      }
-
-      setCharacterAttr((prev) => ({
-        ...prev,
-        position: { x: newX, y: newY },
-      }));
-    };
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [setCharacterAttr]);
+  }, [handleResize]);
 
   const getDirection = (dx, dy, current) => {
     if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'right' : 'left';
@@ -83,8 +54,8 @@ export default function MovableBox() {
   const updateTarget = (clientX, clientY) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(rect.width - BOX_SIZE, clientX - rect.left - BOX_SIZE / 2));
-    const y = Math.max(0, Math.min(rect.height - BOX_SIZE, clientY - rect.top - BOX_SIZE / 2));
+    const x = Math.max(0, Math.min(rect.width - sprite.boxSize, clientX - rect.left - sprite.boxSize / 2));
+    const y = Math.max(0, Math.min(rect.height - sprite.boxSize, clientY - rect.top - sprite.boxSize / 2));
     targetRef.current = { x, y };
   };
 
@@ -103,30 +74,28 @@ export default function MovableBox() {
     handleStart(e.touches[0].clientX, e.touches[0].clientY);
   };
 
-  const accumulatorRef = useRef(0);
-
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isMouseDown.current) updateTarget(e.clientX, e.clientY);
     };
+
     const handleTouchMove = (e) => {
       if (isMouseDown.current) updateTarget(e.touches[0].clientX, e.touches[0].clientY);
     };
-    const stop = () => {
+
+    const handleStop = () => {
       isMouseDown.current = false;
       targetRef.current = null;
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', stop);
+    window.addEventListener('mouseup', handleStop);
     window.addEventListener('touchmove', handleTouchMove);
-    window.addEventListener('touchend', stop);
+    window.addEventListener('touchend', handleStop);
 
-    let raf = null;
-    let animFrame = null;
-    const movingRef = { current: false };
+    let rafMove, rafFrame;
 
-    const loop = () => {
+    const moveLoop = () => {
       if (foundOpen) {
         targetRef.current = null;
         isMouseDown.current = false;
@@ -143,9 +112,9 @@ export default function MovableBox() {
           dy = targetRef.current.y - y;
           const dist = Math.hypot(dx, dy);
 
-          if (dist > SPEED) {
-            dx = (dx / dist) * SPEED;
-            dy = (dy / dist) * SPEED;
+          if (dist > sprite.speed) {
+            dx = (dx / dist) * sprite.speed;
+            dy = (dy / dist) * sprite.speed;
             x += dx;
             y += dy;
             moved = true;
@@ -161,14 +130,11 @@ export default function MovableBox() {
               setFoundOpen(true);
               targetRef.current = null;
               isMouseDown.current = false;
-              return {
-                ...prev,
-                position: { x, y }
-              };
+              return { ...prev, position: { x, y } };
             }
 
             const newDir = getDirection(dx, dy, prev.direction);
-            movingRef.current = true; // ⬅️ AQUI
+            movingRef.current = true;
             return {
               ...prev,
               position: { x, y },
@@ -177,37 +143,37 @@ export default function MovableBox() {
           }
         }
 
-        movingRef.current = false; // ⬅️ E AQUI
+        movingRef.current = false;
         return prev;
       });
 
-      raf = requestAnimationFrame(loop);
+      rafMove = requestAnimationFrame(moveLoop);
     };
 
-    const animate = () => {
+    const frameLoop = () => {
       if (movingRef.current) {
         accumulatorRef.current += 1;
         if (accumulatorRef.current >= 15) {
-          setFrame((f) => (f + 1) % FRAME_COUNT);
+          setFrame((f) => (f + 1) % sprite.frameCount);
           accumulatorRef.current = 0;
         }
       } else {
         setFrame(0);
       }
 
-      animFrame = requestAnimationFrame(animate);
+      rafFrame = requestAnimationFrame(frameLoop);
     };
 
-    raf = requestAnimationFrame(loop);
-    animFrame = requestAnimationFrame(animate);
+    rafMove = requestAnimationFrame(moveLoop);
+    rafFrame = requestAnimationFrame(frameLoop);
 
     return () => {
-      if (raf) cancelAnimationFrame(raf);
-      if (animFrame) cancelAnimationFrame(animFrame);
+      cancelAnimationFrame(rafMove);
+      cancelAnimationFrame(rafFrame);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', stop);
+      window.removeEventListener('mouseup', handleStop);
       window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', stop);
+      window.removeEventListener('touchend', handleStop);
     };
   }, []);
 
@@ -224,12 +190,13 @@ export default function MovableBox() {
         backgroundSize: '100px 100px',
         touchAction: 'none',
         overflow: 'hidden',
+        border: '3px solid red'
       }}
     >
       <div
         style={{
-          width: BOX_SIZE,
-          height: BOX_SIZE,
+          width: sprite.boxSize,
+          height: sprite.boxSize,
           position: 'absolute',
           transform: `translate(${characterAttr.position.x}px, ${characterAttr.position.y}px)`,
           transition: 'transform 0.05s linear',
@@ -243,7 +210,7 @@ export default function MovableBox() {
             bottom: -4,
             left: '50%',
             transform: 'translateX(-50%)',
-            width: BOX_SIZE * 0.6,
+            width: sprite.boxSize * 0.6,
             height: 6,
             backgroundColor: 'rgba(0, 0, 0, 0.25)',
             borderRadius: '50%',
@@ -253,13 +220,13 @@ export default function MovableBox() {
         {/* sprite */}
         <div
           style={{
-            width: BOX_SIZE,
-            height: BOX_SIZE,
+            width: sprite.boxSize,
+            height: sprite.boxSize,
             imageRendering: 'pixelated',
-            backgroundImage: `url(${spriteSrc})`,
+            backgroundImage: `url(${sprite.img})`,
             backgroundRepeat: 'no-repeat',
-            backgroundSize: `${SPRITE_SIZE * FRAME_COUNT}px ${SPRITE_SIZE * 4}px`,
-            backgroundPosition: `-${frame * SPRITE_SIZE}px -${characterAttr.directionRowMap[characterAttr.direction] * SPRITE_SIZE}px`,
+            backgroundSize: `${sprite.height * sprite.frameCount}px ${sprite.height * 4}px`,
+            backgroundPosition: `-${frame * sprite.height}px -${characterAttr.directionRowMap[characterAttr.direction] * sprite.height}px`,
             zIndex: 2,
             position: 'relative',
           }}

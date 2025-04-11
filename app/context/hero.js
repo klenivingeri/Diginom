@@ -39,6 +39,11 @@ export const hero = {
   skills: [],
   sprite: {
     img: spriteSrc,
+    height: 32,
+    width: 32,
+    frameCount: 4,
+    boxSize: 30,
+    speed: 4,
   },
   directionRowMap: {
     down: 0,
