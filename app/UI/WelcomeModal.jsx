@@ -1,7 +1,7 @@
 import { toggleFullScreen } from '../utils/fullScreen'
 
 export default function WelcomeModal({ open, onClose }) {
-  if (true) return null;
+  if (!open) return null;
 
   const handleOnClose = () => {
     toggleFullScreen()

@@ -2,7 +2,6 @@ import { useGame } from '../context/GameContext';
 
 export default function MapGrid() {
   const { mapGrids, enteredGridCell } = useGame();
-  console.log(enteredGridCell)
   return (
     <div
       style={{

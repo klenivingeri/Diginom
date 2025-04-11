@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { ButtonExpand } from './ButtonExpand';
 import FoundModal from './FoundModal';
-
+import { TopLevelAlert } from './TopLevelAlert'
 import WelcomeModal from './WelcomeModal'
 
 const UIBottom = ({ children }) => {
@@ -20,6 +20,7 @@ const UIBottom = ({ children }) => {
     {children}
   </div>
 }
+
 const DistanceTraveledBar = ({ distanceRef }) => {
   const [width, setWidth] = useState(0);
 
@@ -87,15 +88,17 @@ const ShowMoviment = ({ characterAttr }) => {
     {`y: ${Math.floor(characterAttr.position.y)} x: ${Math.floor(characterAttr.position.x)}`}
   </div>
 }
+
 export const UI = () => {
-  const { distanceRef, foundOpen, setFoundOpen, resetDistance, characterAttr } = useGame()
-  const [modaOpen, setModal] = useState(true)
+  const { modaStartOpen, setModaStart, distanceRef, foundOpen, setFoundOpen, resetDistance, characterAttr, topLevelAlert } = useGame()
+
+
   return (
     <>
       <ButtonExpand />
-      <WelcomeModal open={modaOpen} onClose={() => setModal(false)} />
-      <FoundModal open={foundOpen} onClose={() => setFoundOpen(false)} resetDistance={resetDistance} />
-
+      <WelcomeModal open={modaStartOpen} onClose={() => setModaStart(false)} />
+      <FoundModal />
+      <TopLevelAlert topLevelAlert={topLevelAlert} />
       <ShowMoviment characterAttr={characterAttr} />
       <UIBottom>
 

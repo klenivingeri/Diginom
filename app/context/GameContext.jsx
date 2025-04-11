@@ -12,9 +12,11 @@ export const GameProvider = ({ children }) => {
   const [characterAttr, setCharacterAttr] = useState(hero);
   const [currentGridLevel, setCurrentGridLevel] = useState('???');
   const [mapGrids, setMapGrids] = useState([]);
-  const [enteredGridCell, setEnteredGridCell] = useState(null);
+  const [modaStartOpen, setModaStart] = useState(true)
+  const [enteredGridCell, setEnteredGridCell] = useState({ level: 0 });
+  const [topLevelAlert, settopLevelAlert] = useState(false); //alerta nivel superior
   const [random, setRandom] = useState(getRandom());
-  const [foundOpen, setFoundOpen] = useState(false);
+  const [foundOpen, setFoundOpen] = useState(false); // Algo encontrado
   const distanceRef = useRef(0);
   const containerRef = useRef(null);
   const targetRef = useRef(null);
@@ -64,13 +66,18 @@ export const GameProvider = ({ children }) => {
 
     setCurrentGridLevel(level);
 
-    setEnteredGridCell((prev) => {
-      if (!prev || prev.row !== row || prev.col !== col) {
-        console.log(`Entrou na célula: linha ${row}, coluna ${col}, nível ${level}`);
-        return { row, col, level };
-      }
-      return prev;
-    });
+    if (!modaStartOpen) {
+      setEnteredGridCell((prev) => {
+        if (!prev || prev.row !== row || prev.col !== col) {
+          console.log(`Entrou na célula: linha ${row}, coluna ${col}, nível ${level}`);
+          return { row, col, level };
+        }
+        return prev;
+      });
+    }
+
+
+    settopLevelAlert(enteredGridCell?.level - characterAttr?.level >= 2)
   }, [characterAttr.position]);
 
   useEffect(() => {
@@ -105,6 +112,8 @@ export const GameProvider = ({ children }) => {
         lastOrientationRef,
         lastPositionRef,
         handleResize,
+        topLevelAlert,
+        modaStartOpen, setModaStart
       }}
     >
       {children}

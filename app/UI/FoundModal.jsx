@@ -1,13 +1,13 @@
 import { useGame } from '../context/GameContext';
 
-export default function FoundModal({ open, onClose, resetDistance }) {
-  const { currentGridLevel } = useGame();
+export default function FoundModal() {
+  const { currentGridLevel, foundOpen, setFoundOpen, resetDistance } = useGame();
 
-  if (!open) return null;
+  if (!foundOpen) return null;
 
   const handleOnClose = () => {
     resetDistance();
-    onClose();
+    setFoundOpen();
   };
 
   return (

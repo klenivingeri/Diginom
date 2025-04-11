@@ -186,11 +186,10 @@ export default function MovableBox() {
         width: '100vw',
         height: '100vh',
         position: 'relative',
-        background: 'url("/gramabase.png") repeat',
         backgroundSize: '100px 100px',
         touchAction: 'none',
         overflow: 'hidden',
-        border: '3px solid red'
+        zIndex: 20,
       }}
     >
       <div
