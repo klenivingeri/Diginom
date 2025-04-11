@@ -11,8 +11,9 @@ export const TopLevelAlert = ({ topLevelAlert }) => {
     let count = 0;
     const interval = setInterval(() => {
       setShowPulse(true);
-      setTimeout(() => setShowPulse(false), 1500); // desaparece após 1s
+      setTimeout(() => setShowPulse(false), 1000); // desaparece após 1s
       count++;
+      if (count >= 3) clearInterval(interval); // executa 3 vezes
     }, 2000); // a cada 2 segundos
 
     return () => clearInterval(interval);
@@ -25,31 +26,27 @@ export const TopLevelAlert = ({ topLevelAlert }) => {
           @keyframes pulse {
             0% {
               transform: scale(1);
-              opacity: 0.8;
+              opacity: 1;
             }
-            25% {
+            50% {
               transform: scale(1.2);
               opacity: 0.5;
             }
-            50% {
-              transform: scale(1);
-              opacity: 0.8;
-            }
             100% {
-              transform: scale(1.2)
-              opacity: 0.5;
+              transform: scale(1);
+              opacity: 1;
             }
           }
 
           @keyframes borderPulse {
             0% {
-              box-shadow: inset 0 0 10px red, 0 0 10px red;
+              box-shadow: inset 0 0 20px red, 0 0 20px red;
             }
             50% {
-              box-shadow: inset 0 0 30px red, 0 0 30px red;
+              box-shadow: inset 0 0 40px red, 0 0 40px red;
             }
             100% {
-              box-shadow: inset 0 0 10px red, 0 0 10px red;
+              box-shadow: inset 0 0 20px red, 0 0 20px red;
             }
           }
         `}
@@ -66,7 +63,7 @@ export const TopLevelAlert = ({ topLevelAlert }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            animation: showPulse ? 'borderPulse 1.5s ease-in-out' : 'none',
+            animation: showPulse ? 'borderPulse 1s ease-in-out' : 'none',
           }}
         >
           {showPulse && (
@@ -74,21 +71,22 @@ export const TopLevelAlert = ({ topLevelAlert }) => {
               style={{
                 width: '150px',
                 height: '150px',
-                background: 'red',
                 display: 'flex',
                 position: 'relative',
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
                 borderRadius: '50%',
-                animation: 'pulse 1.5s ease-in-out',
+                animation: 'pulse 2s ease-in-out',
+                color: 'red',
+                zIndex: 20,
               }}
 
             > <img src='./warning3.png' height="100" />
               Está area é nivel {currentGridLevel}
             </div>
           )}
-        </div >
+        </div>
       )}
     </>
   );

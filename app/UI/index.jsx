@@ -21,13 +21,14 @@ const UIBottom = ({ children }) => {
   </div>
 }
 
-const DistanceTraveledBar = ({ distanceRef }) => {
+const DistanceTraveledBar = ({ distanceRef, windowSize }) => {
+
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const newWidth = (distanceRef.current / 2000) * 100;
-      setWidth(newWidth);
+      const newWidth = (distanceRef.current / 500) * 100;
+      setWidth(newWidth <= 100 ? newWidth : 100);
     }, 50); // atualiza a cada 50ms (ou ajuste como preferir)
 
     return () => clearInterval(interval);
@@ -72,25 +73,28 @@ const DistanceTraveledBar = ({ distanceRef }) => {
   );
 };
 
-const ShowMoviment = ({ characterAttr }) => {
+const ShowMoviment = ({ characterAttr, distanceRef, randomRef }) => {
   return <div style={{
     position: 'fixed',
-    bottom: 10,
+    bottom: 300,
     right: 10,
     width: '100px',
+    height: '200px',
     color: 'black',
     fontSize: '10px ',
     zIndex: 199,
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'end',
-    height: '5px',
   }}>
+    <div>{`E: ${randomRef.current}`}</div>
+    <div>{`D: ${Math.floor(distanceRef.current)}`}</div>
     {`y: ${Math.floor(characterAttr.position.y)} x: ${Math.floor(characterAttr.position.x)}`}
   </div>
 }
 
 export const UI = () => {
-  const { modaStartOpen, setModaStart, distanceRef, foundOpen, setFoundOpen, resetDistance, characterAttr, topLevelAlert } = useGame()
+  const { modaStartOpen, setModaStart, distanceRef, characterAttr, randomRef, topLevelAlert, windowSize } = useGame()
 
 
   return (
@@ -99,11 +103,12 @@ export const UI = () => {
       <WelcomeModal open={modaStartOpen} onClose={() => setModaStart(false)} />
       <FoundModal />
       <TopLevelAlert topLevelAlert={topLevelAlert} />
-      <ShowMoviment characterAttr={characterAttr} />
+      <ShowMoviment characterAttr={characterAttr} distanceRef={distanceRef} randomRef={randomRef} />
       <UIBottom>
 
         <DistanceTraveledBar
           distanceRef={distanceRef}
+          windowSize={windowSize}
         />
       </UIBottom>
     </>

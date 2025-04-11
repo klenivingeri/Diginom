@@ -15,9 +15,10 @@ export const GameProvider = ({ children }) => {
   const [modaStartOpen, setModaStart] = useState(true)
   const [enteredGridCell, setEnteredGridCell] = useState({ level: 0 });
   const [topLevelAlert, settopLevelAlert] = useState(false); //alerta nivel superior
-  const [random, setRandom] = useState(getRandom());
+
   const [foundOpen, setFoundOpen] = useState(false); // Algo encontrado
-  const distanceRef = useRef(0);
+  const distanceRef = useRef(0); // distancia porcorida pelo personagem y,x
+  const randomRef = useRef(0);
   const containerRef = useRef(null);
   const targetRef = useRef(null);
   const isMouseDown = useRef(false);
@@ -45,7 +46,13 @@ export const GameProvider = ({ children }) => {
 
   const resetDistance = () => {
     distanceRef.current = 0;
-    setRandom(getRandom());
+
+    if (windowSize.width > windowSize.height) {
+      randomRef.current = getRandom(windowSize?.height * 0.02, windowSize?.height * 0.4 + 100);
+      return;
+    }
+
+    randomRef.current = getRandom(windowSize.width * 0.02, windowSize.width * 0.4 + 100);
   };
 
   // Atualiza célula atual (nível)
@@ -87,6 +94,7 @@ export const GameProvider = ({ children }) => {
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
+
   }, []);
 
   return (
@@ -98,8 +106,7 @@ export const GameProvider = ({ children }) => {
         characterAttr,
         setCharacterAttr,
         currentGridLevel,
-        random,
-        setRandom,
+        randomRef,
         distanceRef,
         targetRef,
         isMouseDown,

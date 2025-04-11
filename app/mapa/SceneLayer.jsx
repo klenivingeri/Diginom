@@ -129,7 +129,7 @@ export default function SceneLayer() {
   }, []);
 
   const isMobile = viewport.height > viewport.width;
-  console.log(isMobile)
+
   if (!ready) return null;
 
   const ajust = (obsPosition, obs) => {

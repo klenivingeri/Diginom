@@ -1,8 +1,7 @@
 import { useGame } from '../context/GameContext';
 
 export default function FoundModal() {
-  const { currentGridLevel, foundOpen, setFoundOpen, resetDistance } = useGame();
-
+  const { currentGridLevel, foundOpen, setFoundOpen, resetDistance, randomRef } = useGame();
   if (!foundOpen) return null;
 
   const handleOnClose = () => {
@@ -19,6 +18,7 @@ export default function FoundModal() {
         <h2 className="text-xl font-bold mb-4 text-black">Você encontrou algo!</h2>
         <p className="mb-2 text-black">
           Você está no <strong>nível {currentGridLevel}</strong> do mapa.
+          {randomRef.current}
         </p>
         <p className="mb-6 text-black">Continue explorando para achar mais surpresas.</p>
         <button

@@ -6,7 +6,7 @@ export default function MovableBox() {
   const {
     frame, setFrame,
     characterAttr, setCharacterAttr,
-    random,
+    randomRef,
     containerRef,
     targetRef,
     isMouseDown,
@@ -126,7 +126,7 @@ export default function MovableBox() {
 
           if (moved) {
             distanceRef.current += Math.hypot(dx, dy);
-            if (distanceRef.current > random) {
+            if (distanceRef.current > randomRef.current) {
               setFoundOpen(true);
               targetRef.current = null;
               isMouseDown.current = false;

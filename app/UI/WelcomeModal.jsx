@@ -1,10 +1,14 @@
 import { toggleFullScreen } from '../utils/fullScreen'
+import { useGame } from '../context/GameContext';
+
 
 export default function WelcomeModal({ open, onClose }) {
+  const { resetDistance } = useGame();
   if (!open) return null;
 
   const handleOnClose = () => {
     toggleFullScreen()
+    resetDistance()
     onClose()
   }
 
