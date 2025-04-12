@@ -1,10 +1,9 @@
-
-import { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { ButtonExpand } from './ButtonExpand';
 import FoundModal from './FoundModal';
 import { TopLevelAlert } from './TopLevelAlert'
 import WelcomeModal from './WelcomeModal'
+import { DistanceTraveledBar } from './DistanceTraveledBar'
 
 const UIBottom = ({ children }) => {
   return <div style={{
@@ -21,68 +20,18 @@ const UIBottom = ({ children }) => {
   </div>
 }
 
-const DistanceTraveledBar = ({ distanceRef, windowSize }) => {
 
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newWidth = (distanceRef.current / 500) * 100;
-      setWidth(newWidth <= 100 ? newWidth : 100);
-    }, 50); // atualiza a cada 50ms (ou ajuste como preferir)
-
-    return () => clearInterval(interval);
-  }, [distanceRef]);
-
-  return (
-    <div style={{
-      width: '100%',
-      height: '5px',
-      position: 'relative',
-      overflow: 'visible',
-    }}>
-      <div style={{
-        background: 'red',
-        height: '10px',
-        width: `${width}%`,
-        position: 'relative',
-        transition: 'width 0.1s linear',
-      }}>
-        <div style={{
-          position: 'absolute',
-          right: 0,
-          width: '5px',
-          height: '5px',
-          background: 'red',
-          animation: 'shake 0.3s infinite',
-        }} />
-      </div>
-
-      <style>
-        {`
-          @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            50% { transform: translateX(2px); }
-            75% { transform: translateX(-2px); }
-            100% { transform: translateX(0); }
-          }
-        `}
-      </style>
-    </div>
-  );
-};
 
 const ShowMoviment = ({ characterAttr, distanceRef, randomRef }) => {
   return <div style={{
     position: 'fixed',
-    bottom: 300,
+    bottom: 10,
     right: 10,
-    width: '100px',
-    height: '200px',
+    width: '70px',
+    height: '50px',
     color: 'black',
     fontSize: '10px ',
-    zIndex: 199,
+    zIndex: 2,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'end',
@@ -94,7 +43,7 @@ const ShowMoviment = ({ characterAttr, distanceRef, randomRef }) => {
 }
 
 export const UI = () => {
-  const { modaStartOpen, setModaStart, distanceRef, characterAttr, randomRef, topLevelAlert, windowSize } = useGame()
+  const { modaStartOpen, setModaStart, distanceRef, characterAttr, randomRef, topLevelAlert, windowSize, fullBar } = useGame()
 
 
   return (
@@ -109,6 +58,8 @@ export const UI = () => {
         <DistanceTraveledBar
           distanceRef={distanceRef}
           windowSize={windowSize}
+          randomRef={randomRef}
+          fullBar={fullBar}
         />
       </UIBottom>
     </>

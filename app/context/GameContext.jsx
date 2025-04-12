@@ -15,6 +15,7 @@ export const GameProvider = ({ children }) => {
   const [modaStartOpen, setModaStart] = useState(true)
   const [enteredGridCell, setEnteredGridCell] = useState({ level: 0 });
   const [topLevelAlert, settopLevelAlert] = useState(false); //alerta nivel superior
+  const [fullBar, setFullBar] = useState(0)
 
   const [foundOpen, setFoundOpen] = useState(false); // Algo encontrado
   const distanceRef = useRef(0); // distancia porcorida pelo personagem y,x
@@ -47,12 +48,15 @@ export const GameProvider = ({ children }) => {
   const resetDistance = () => {
     distanceRef.current = 0;
 
-    if (windowSize.width > windowSize.height) {
-      randomRef.current = getRandom(windowSize?.height * 0.02, windowSize?.height * 0.4 + 100);
+    if (windowSize.width < windowSize.height) {
+      randomRef.current = getRandom(windowSize.width / 8, windowSize.width / 2);
+      setFullBar((windowSize.width - (windowSize.width / 1.5)))
       return;
+    } else {
+      randomRef.current = getRandom(windowSize?.height / 8, windowSize?.height / 2);
+      setFullBar((windowSize.height - (windowSize.height / 1.5)))
     }
 
-    randomRef.current = getRandom(windowSize.width * 0.02, windowSize.width * 0.4 + 100);
   };
 
   // Atualiza célula atual (nível)
@@ -120,6 +124,7 @@ export const GameProvider = ({ children }) => {
         lastPositionRef,
         handleResize,
         topLevelAlert,
+        fullBar,
         modaStartOpen, setModaStart
       }}
     >
