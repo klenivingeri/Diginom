@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: "Press Start 2P", system-ui;
+}
 
 html,
 body {
