@@ -49,11 +49,11 @@ export const GameProvider = ({ children }) => {
     distanceRef.current = 0;
 
     if (windowSize.width < windowSize.height) {
-      randomRef.current = getRandom(windowSize.width / 8, windowSize.width / 2);
+      randomRef.current = getRandom(windowSize.width / 8, windowSize.width / 1.5);
       setFullBar((windowSize.width - (windowSize.width / 1.5)))
       return;
     } else {
-      randomRef.current = getRandom(windowSize?.height / 8, windowSize?.height / 2);
+      randomRef.current = getRandom(windowSize?.height / 8, windowSize?.height / 1.5);
       setFullBar((windowSize.height - (windowSize.height / 1.5)))
     }
 

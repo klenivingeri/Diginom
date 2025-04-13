@@ -20,8 +20,6 @@ const UIBottom = ({ children }) => {
   </div>
 }
 
-
-
 const ShowMoviment = ({ characterAttr, distanceRef, randomRef }) => {
   return <div style={{
     position: 'fixed',

@@ -63,20 +63,20 @@ export const TopLevelAlert = ({ topLevelAlert }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            animation: showPulse ? 'borderPulse 1s ease-in-out' : 'none',
+            animation: 'borderPulse 1s infinite',
           }}
         >
           {showPulse && (
             <div
               style={{
+                background: 'black',
                 width: '150px',
-                height: '150px',
+                height: '80px',
                 display: 'flex',
                 position: 'relative',
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
-                borderRadius: '50%',
                 animation: 'pulse 2s ease-in-out',
                 color: 'red',
                 zIndex: 20,
