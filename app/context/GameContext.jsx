@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getRandom } from '../utils/random';
-import { transformGrid } from '../utils/transformGrid';
 import { hero } from './hero';
-import { grid } from '../mapa/grid/nivel1';
+import { grid1 } from '../mapa/grid/nivel1';
 
 const GameContext = createContext(null);
 GameContext.displayName = 'GameContext';
@@ -11,7 +10,7 @@ export const GameProvider = ({ children }) => {
   const [frame, setFrame] = useState(0);
   const [characterAttr, setCharacterAttr] = useState(hero);
   const [currentGridLevel, setCurrentGridLevel] = useState('???');
-  const [mapGrids, setMapGrids] = useState([]);
+  const [mapGrids, setMapGrids] = useState(grid1);
   const [modaStartOpen, setModaStart] = useState(true)
   const [enteredGridCell, setEnteredGridCell] = useState({ level: 0 });
   const [topLevelAlert, settopLevelAlert] = useState(false); //alerta nivel superior
@@ -71,8 +70,8 @@ export const GameProvider = ({ children }) => {
     const row = Math.floor(centerY / cellHeight);
 
     const level =
-      row >= 0 && row < grid.length && col >= 0 && col < grid[0].length
-        ? grid[row][col]
+      row >= 0 && row < grid1.length && col >= 0 && col < grid1[0].length
+        ? grid1[row][col]
         : '???';
 
     setCurrentGridLevel(level);
@@ -92,7 +91,6 @@ export const GameProvider = ({ children }) => {
   }, [characterAttr.position]);
 
   useEffect(() => {
-    setMapGrids(transformGrid(grid));
     if (typeof window !== 'undefined') {
       handleResize();
       window.addEventListener('resize', handleResize);

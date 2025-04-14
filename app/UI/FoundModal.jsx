@@ -16,10 +16,10 @@ export default function FoundModal() {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-4 text-black">Você encontrou algo!</h2>
-        <p className="mb-2 text-black">
+        <p className="mb-2 text-black text-sm">
           Você está no <strong>nível {currentGridLevel}</strong> do mapa.
         </p>
-        <p className="mb-6 text-black">Continue explorando para achar mais surpresas.</p>
+        <p className="mb-6 text-sm text-black">Continue explorando para achar mais surpresas.</p>
         <button
           onClick={handleOnClose}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"

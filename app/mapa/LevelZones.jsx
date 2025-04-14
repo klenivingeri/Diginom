@@ -23,15 +23,15 @@ export default function MapGrid() {
             width: '16.6667%', // 100 / 6
             height: '8.3333%', // 100 / 12
             background: item.bg,
-            border: '1px solid rgba(0,0,0,0.2)',
             boxSizing: 'border-box',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 8,
+            ...item.border
           }}
         >
-          {item.level}
+          {item?.level}
         </div>
       ))}
     </div>

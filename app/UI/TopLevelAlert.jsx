@@ -69,8 +69,7 @@ export const TopLevelAlert = ({ topLevelAlert }) => {
           {showPulse && (
             <div
               style={{
-                background: 'black',
-                width: '150px',
+                width: '180px',
                 height: '80px',
                 display: 'flex',
                 position: 'relative',
@@ -79,11 +78,12 @@ export const TopLevelAlert = ({ topLevelAlert }) => {
                 flexDirection: 'column',
                 animation: 'pulse 2s ease-in-out',
                 color: 'red',
+                fontSize: '8px',
                 zIndex: 20,
               }}
 
             > <img src='./warning3.png' height="100" />
-              Está area é nivel {currentGridLevel}
+              ESTÁ AREA É LV: {currentGridLevel}
             </div>
           )}
         </div>
