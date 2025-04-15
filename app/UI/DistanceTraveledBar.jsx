@@ -4,7 +4,6 @@ export const DistanceTraveledBar = ({ distanceRef, windowSize, fullBar }) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    console.log('aaaaaaaa', windowSize)
     const interval = setInterval(() => {
       const newWidth = Math.floor((distanceRef.current / fullBar) * 100);
       setProgress(newWidth <= 100 ? newWidth : 100);
@@ -22,7 +21,8 @@ export const DistanceTraveledBar = ({ distanceRef, windowSize, fullBar }) => {
       overflow: 'visible',
     }}>
       <div style={{
-        background: 'red',
+        background: 'url(/distanceBar.png)',
+        backgroundSize: ` ${windowSize.width}px`,
         height: '10px',
         width: `${progress}%`,
         position: 'relative',

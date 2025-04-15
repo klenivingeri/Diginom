@@ -45,6 +45,32 @@ export const hero = {
     boxSize: 25,
     speed: 3,
   },
+  pet: {
+    name: "agumon",
+    life: 100,
+    nivel: 1,
+    strength: 10,
+    agility: 8,
+    intelligence: 6,
+    speed: 1,
+    critical: 0,
+    defense: 5,
+    attackPower: 12,
+    shadow: {
+      height: 10,
+      width: 25,
+    },
+    sprite: {
+      img: "./diginom/map1/Agumon.webp",
+      height: 25,
+      width: 100,
+      base: 0,
+      rotate: {
+        pet: true,
+        emeny: false,
+      },
+    },
+  },
   directionRowMap: {
     down: 0,
     left: 1,

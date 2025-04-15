@@ -48,12 +48,12 @@ export const GameProvider = ({ children }) => {
     distanceRef.current = 0;
 
     if (windowSize.width < windowSize.height) {
-      randomRef.current = getRandom(windowSize.width / 8, windowSize.width / 1.5);
+      randomRef.current = getRandom(windowSize.width / 20, windowSize.width / 2);
       setFullBar((windowSize.width - (windowSize.width / 1.5)))
       return;
     } else {
-      randomRef.current = getRandom(windowSize?.height / 8, windowSize?.height / 1.5);
-      setFullBar((windowSize.height - (windowSize.height / 1.5)))
+      randomRef.current = getRandom(windowSize?.height / 20, windowSize?.height / 2);
+      setFullBar((windowSize.height - (windowSize.height / 3)))
     }
 
   };
@@ -69,10 +69,10 @@ export const GameProvider = ({ children }) => {
     const col = Math.floor(centerX / cellWidth);
     const row = Math.floor(centerY / cellHeight);
 
-    const level =
-      row >= 0 && row < grid1.length && col >= 0 && col < grid1[0].length
-        ? grid1[row][col]
-        : '???';
+    const colLetter = String.fromCharCode(97 + col); // 97 = 'a' em ASCII
+    const id = `${row + 1}${colLetter}`; // exemplo: row 0, col 1 => "1b"
+
+    const level = grid1.find(cell => cell.id === id)?.level ?? '???';
 
     setCurrentGridLevel(level);
 
