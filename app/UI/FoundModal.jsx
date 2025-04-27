@@ -14,7 +14,7 @@ export default function FoundModal() {
     setIsItem(Math.round(Math.random()))
   };
 
-  console.log(isItem)
+
   return isItem
     ? (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">

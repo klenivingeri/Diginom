@@ -60,6 +60,11 @@ export const GameProvider = ({ children }) => {
 
   // Atualiza célula atual (nível)
   useEffect(() => {
+    const isNotFullScreen = !document.fullscreenElement
+
+    if (isNotFullScreen) {
+      setModaStart(true)
+    }
     const cellWidth = window.innerWidth / gridCols;
     const cellHeight = window.innerHeight / gridRows;
 

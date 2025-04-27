@@ -46,7 +46,6 @@ export const UI = () => {
 
   return (
     <>
-      <ButtonExpand />
       <WelcomeModal open={modaStartOpen} onClose={() => setModaStart(false)} />
       <FoundModal />
       <TopLevelAlert topLevelAlert={topLevelAlert} />

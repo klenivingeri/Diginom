@@ -7,7 +7,7 @@ export default function WelcomeModal({ open, onClose }) {
   if (!open) return null;
 
   const handleOnClose = () => {
-    //toggleFullScreen()
+    toggleFullScreen()
     resetDistance()
     onClose()
   }
